@@ -193,10 +193,12 @@ function validateForm(cmd) {
           var com;
           ports.forEach(function (port) {
             if (port.manufacturer == "FTDI") {
-              com = port.path;
+              if (port.serialNumber == "A100Y8LF") {
+                com = port.path;
+              }
             }
           });
-          console.log(com);
+          console.log(com); //A100Y8LF
 
           serport = new serialport(com, { baudRate: rate });
           serport.on("error", function (err) {
@@ -384,7 +386,9 @@ function serviceSidebar(e) {
         var com;
         ports.forEach(function (port) {
           if (port.manufacturer == "FTDI") {
-            com = port.path;
+            if (port.serialNumber == "A100Y8LF") {
+              com = port.path;
+            }
           }
         });
         console.log(com);
@@ -506,7 +510,9 @@ function serviceSidebar(e) {
         var com;
         ports.forEach(function (port) {
           if (port.manufacturer == "FTDI") {
-            com = port.path;
+            if (port.serialNumber == "A100Y8LF") {
+              com = port.path;
+            }
           }
         });
         console.log(com);
@@ -705,7 +711,7 @@ function cleanAndFill(cmd, items, ver) {
         if (port.manufacturer == "FTDI") {
           //serports.push(port.path);
           //console.log('port :>> ', port);
-          if (port.serialNumber == "AC01P2CA") {
+          if (port.serialNumber == "A100Y8LF") {
             com = port.path;
           } /*if(port.serialNumber== undefined){
           com=port.path;
@@ -865,7 +871,7 @@ function supplementSelection(cmd, items) {
         if (port.manufacturer == "FTDI") {
           //serports.push(port.path);
           //console.log('port :>> ', port);
-          if (port.serialNumber == "AC01P2CA") {
+          if (port.serialNumber == "A100Y8LF") {
             com = port.path;
           } /*if(port.serialNumber== undefined){
             com=port.path;
@@ -959,7 +965,7 @@ function flavourSelection(cmd, items) {
         if (port.manufacturer == "FTDI") {
           //serports.push(port.path);
           //console.log('port :>> ', port);
-          if (port.serialNumber == "AC01P2CA") {
+          if (port.serialNumber == "A100Y8LF") {
             com = port.path;
           } /*if(port.serialNumber== undefined){
             com=port.path;
