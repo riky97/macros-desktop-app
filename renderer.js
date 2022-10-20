@@ -183,25 +183,17 @@ function validateForm(cmd) {
       async function listSerialPorts() {
         await serialport.list().then((ports, err) => {
           if (err) {
-            //document.getElementById('error').textContent = err.message
             console.log(err);
             return;
           }
-
           console.log("ports", ports);
-
           if (ports.length === 0) {
-            //document.getElementById('error').textContent = 'No ports discovered'
             console.log("No ports discovered");
           }
           var com;
           ports.forEach(function (port) {
             if (port.manufacturer == "FTDI") {
-              if (port.serialNumber == "AC01P2CA") {
-                com = port.path;
-              } /*if(port.serialNumber== undefined){
-            com=port.path;
-          }*/
+              com = port.path;
             }
           });
           console.log(com);
@@ -392,9 +384,7 @@ function serviceSidebar(e) {
         var com;
         ports.forEach(function (port) {
           if (port.manufacturer == "FTDI") {
-            if (port.serialNumber == "AC01P2CA") {
-              com = port.path;
-            }
+            com = port.path;
           }
         });
         console.log(com);
@@ -516,9 +506,7 @@ function serviceSidebar(e) {
         var com;
         ports.forEach(function (port) {
           if (port.manufacturer == "FTDI") {
-            if (port.serialNumber == "AC01P2CA") {
-              com = port.path;
-            }
+            com = port.path;
           }
         });
         console.log(com);
@@ -618,9 +606,7 @@ function serviceSidebar(e) {
         var com;
         ports.forEach(function (port) {
           if (port.manufacturer == "FTDI") {
-            if (port.serialNumber == "AC01P2CA") {
-              com = port.path;
-            }
+            com = port.path;
           }
         });
         console.log(com);
