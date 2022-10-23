@@ -155,7 +155,7 @@
               <button
                 id="cmd_0"
                 class="btn btn-big btn-bg-primary btn-mobile-stretch"
-                onclick="validateForm(0)"
+                onclick="sendErogationRecipe(0)"
               >
                 Send recipe
               </button>
@@ -173,7 +173,7 @@
             id="section-service"
           >
             <!---------CLEAN AND FILL----------->
-            <div style="display: block" id="service_mode">
+            <div style="display: block" id="clean_fill">
               <h5
                 style="
                   display: block;
@@ -325,6 +325,45 @@
                 coconut
               </button>
             </div>
+            <!---------EROGATION TIME----------->
+            <div style="display: none" id="erogation_time">
+              <h5
+                style="
+                  display: block;
+                  text-transform: uppercase;
+                  margin-bottom: 1em;
+                  margin-top: 1.5em;
+                "
+              >
+                erogation time
+              </h5>
+            </div>
+            <!---------CLEAN TIME----------->
+            <div style="display: none" id="clean_time">
+              <h5
+                style="
+                  display: block;
+                  text-transform: uppercase;
+                  margin-bottom: 1em;
+                  margin-top: 1.5em;
+                "
+              >
+                clean time
+              </h5>
+            </div>
+            <!---------FILL TIME----------->
+            <div style="display: none" id="fill_time">
+              <h5
+                style="
+                  display: block;
+                  text-transform: uppercase;
+                  margin-bottom: 1em;
+                  margin-top: 1.5em;
+                "
+              >
+                fill time
+              </h5>
+            </div>
           </div>
           <hr />
           <!---------MESSAGE BOX----------->
@@ -361,7 +400,7 @@
                   id="cmd_1"
                   type="text"
                   class="btn btn-big btn-bg-primary btn-mobile-stretch"
-                  onclick="validateForm(1)"
+                  onclick="sendErogationRecipe(1)"
                 >
                   Erogation
                 </button>
@@ -465,6 +504,30 @@
           >
             flavour selection
           </button>
+          <button
+            class="btn btn-medium btn-bg-primary btn-mobile-stretch"
+            style="width: 250px"
+            id="erogationTimeButtonMode"
+            onclick="serviceSidebar('et')"
+          >
+            erogation time
+          </button>
+          <button
+            class="btn btn-medium btn-bg-primary btn-mobile-stretch"
+            style="width: 250px"
+            id="cleanTimeButtonMode"
+            onclick="serviceSidebar('ct')"
+          >
+            clean time
+          </button>
+          <button
+            class="btn btn-medium btn-bg-primary btn-mobile-stretch"
+            style="width: 250px"
+            id="fillTimeButtonMode"
+            onclick="serviceSidebar('ft')"
+          >
+            fill time
+          </button>
           <hr />
           <button
             class="btn btn-big btn-bg-primary btn-bg-lighter btn-mobile-stretch"
@@ -497,144 +560,13 @@
       </div>
     </div>
 
-    <script>
-      function showLoader() {
-        let bars = document.querySelectorAll(".load-bar");
-        for (let i = 0; i < bars.length; i++) {
-          bars[i].style.animationDelay = `${i / 15}s`;
-        }
-        document.getElementById("loader").classList.add("show-loader");
-      }
-      function closeLoader() {
-        document.getElementById("loader").classList.remove("show-loader");
-      }
-
-      function OpenModal() {
-        var modal = document.getElementById("modal");
-        modal.style.display = "grid";
-        var user_id = document.getElementById("username").value;
-        var water = document.getElementById("water").value;
-        user_id.textContent = user_id;
-        var supplement = document.getElementById("supplement").value;
-        user_id.textContent = user_id;
-        var flavour = document.getElementById("flavour").value;
-        user_id.textContent = user_id;
-        if (user_id != "") {
-          document.getElementById("modal-username").textContent = user_id;
-        } else {
-          document.getElementById("modal-username").textContent =
-            "not speciefied";
-        }
-        if (water != "") {
-          document.getElementById("modal-water").textContent = water;
-        } else {
-          document.getElementById("modal-water").textContent = "not speciefied";
-        }
-        if (supplement != "") {
-          document.getElementById("modal-supplement").textContent = supplement;
-        } else {
-          document.getElementById("modal-supplement").textContent =
-            "not speciefied";
-        }
-        if (flavour != "") {
-          document.getElementById("modal-flavour").textContent = flavour;
-        } else {
-          document.getElementById("modal-flavour").textContent =
-            "not speciefied";
-        }
-      }
-      function CloseModal(e) {
-        if (e == 0) {
-          var modal = document.getElementById("modal");
-          modal.style.display = "none";
-        } else {
-          var modal = document.getElementById("modal_service");
-          modal.style.display = "none";
-          document
-            .getElementById("error-password")
-            .classList.remove("alert-danger-service");
-          document.getElementById("error-password").textContent = "";
-          document.getElementById("password").value = "";
-        }
-      }
-
-      function showModalService() {
-        var modal_service = document.getElementById("modal_service");
-        modal_service.style.display = "grid";
-      }
-
-      function closemenu() {
-        document
-          .getElementById("sidebarServiceMenu")
-          .classList.remove("opened");
-        document.getElementById("sidebarServiceMenu").classList.add("closed");
-        document.getElementById("sidebar_section").style.display = "none";
-      }
-
-      async function schedulerSerialport() {
-        await serialport.list().then((ports, err) => {
-          if (err) {
-            console.log(err);
-            return;
-          }
-          //console.log('ports', ports);
-
-          if (ports.length === 0) {
-            document.getElementById("msg_usb").classList.remove("alert-danger");
-            document.getElementById("msg_usb").classList.add("alert-danger");
-            document.getElementById("msg_usb").textContent =
-              "USB not connected!";
-            document.getElementById("serial").style.display = "none";
-            console.log("No ports discovered");
-          }
-
-          ports.forEach(function (port) {
-            if (port.manufacturer == "FTDI") {
-              //serports.push(port.path);
-              if (port.serialNumber == "A100Y8LF") {
-                document
-                  .getElementById("msg_usb")
-                  .classList.remove("alert-danger");
-                document.getElementById("msg_usb").textContent = "";
-                document.getElementById("serial").style.display = "flex";
-                document
-                  .getElementById("supplementButtonMode")
-                  .removeAttribute("disabled");
-                document
-                  .getElementById("cleanFillButtonMode")
-                  .removeAttribute("disabled");
-                document
-                  .getElementById("flavourButtonMode")
-                  .removeAttribute("disabled");
-              } else {
-                document
-                  .getElementById("msg_usb")
-                  .classList.add("alert-danger");
-                document.getElementById("msg_usb").textContent =
-                  "USB not connected!";
-                document.getElementById("serial").style.display = "none";
-                //document.getElementById("supplementButtonMode").disabled="true";document.getElementById("cleanFillButtonMode").disabled="true";
-                //document.getElementById("flavourButtonMode").disabled="true";
-
-                //document.getElementById("msg").classList.remove("alert-danger"); document.getElementById("msg").textContent = "";
-                //document.getElementById("msg").classList.remove("alert-success");
-              }
-            } else {
-              document.getElementById("msg_usb").classList.add("alert-danger");
-              document.getElementById("msg_usb").textContent =
-                "USB not connected!";
-              document.getElementById("serial").style.display = "none";
-              //document.getElementById("supplementButtonMode").disabled="true";document.getElementById("cleanFillButtonMode").disabled="true";
-              //document.getElementById("flavourButtonMode").disabled="true";
-            }
-          });
-        });
-      }
-      setTimeout(function listPorts() {
-        schedulerSerialport();
-        setTimeout(listPorts, 100);
-      }, 100);
-    </script>
-    <script src="./renderer.js"></script>
+    <script src="./src/utils.js"></script>
+    <script src="./src/constants.js"></script>
+    <script src="./src/scheduler-serialport.js"></script>
+    <script src="./src/send-erogation-recipe.js"></script>
+    <script src="./src/service-mode.js"></script>
+    <script src="./src/service-mode-clean-fill.js"></script>
+    <script src="./src/service-mode-supplement-selection.js"></script>
+    <script src="./src/service-mode-flavour-selection.js"></script>
   </body>
 </html>
