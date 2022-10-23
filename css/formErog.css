@@ -374,6 +374,10 @@ body.access{
   background: rgba(255, 255, 255, 0.195)!important;
   border: 1px solid transparent!important; 
   }
+
+  .input-service-mode{
+    width: 50px !important;
+  }
   
   
   

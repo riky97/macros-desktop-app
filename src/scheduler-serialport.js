@@ -1,5 +1,5 @@
 async function schedulerSerialport() {
-  await serialport.list().then((ports, err) => {
+  await SerialPort.list().then((ports, err) => {
     if (err) {
       console.log(err);
       return;

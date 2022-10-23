@@ -9,7 +9,7 @@ function cleanAndFill(cmd, items, ver) {
   let sentBuffSer = Buffer.from(cmd_ser);
 
   async function listSerialPorts() {
-    await serialport.list().then((ports, err) => {
+    await SerialPort.list().then((ports, err) => {
       if (err) {
         //document.getElementById('error').textContent = err.message
         console.log(err);
@@ -36,7 +36,7 @@ function cleanAndFill(cmd, items, ver) {
       });
       console.log(com);
 
-      serport = new serialport(com, { baudRate: rate });
+      serport = new SerialPort({path: com,  baudRate: rate });
       serport.on("error", function (err) {
         console.log("Error: ", err.message);
       });

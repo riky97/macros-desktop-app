@@ -100,7 +100,7 @@ function serviceSidebar(e) {
     var buffReqCleanFill = Buffer.from(result);
 
     async function listSerialPorts() {
-      await serialport.list().then((ports, err) => {
+      await SerialPort.list().then((ports, err) => {
         if (err) {
           //document.getElementById('error').textContent = err.message
           console.log(err);
@@ -122,7 +122,7 @@ function serviceSidebar(e) {
           }
         });
         console.log(com);
-        serport = new serialport(com, { baudRate: rate });
+        serport = new SerialPort({ path: com, baudRate: rate });
         serport.on("error", function (err) {
           console.log("Error: ", err.message);
         });
@@ -216,7 +216,7 @@ function serviceSidebar(e) {
     var buffReqSupp = Buffer.from(result);
 
     async function listSerialPorts() {
-      await serialport.list().then((ports, err) => {
+      await SerialPort.list().then((ports, err) => {
         if (err) {
           //document.getElementById('error').textContent = err.message
           console.log(err);
@@ -238,7 +238,7 @@ function serviceSidebar(e) {
           }
         });
         console.log(com);
-        serport = new serialport(com, { baudRate: rate });
+        serport = new SerialPort({ path: com, baudRate: rate });
         serport.on("error", function (err) {
           console.log("Error: ", err.message);
         });
@@ -309,7 +309,7 @@ function serviceSidebar(e) {
     var buffReqFl = Buffer.from(result);
 
     async function listSerialPorts() {
-      await serialport.list().then((ports, err) => {
+      await SerialPort.list().then((ports, err) => {
         if (err) {
           //document.getElementById('error').textContent = err.message
           console.log(err);
@@ -329,7 +329,7 @@ function serviceSidebar(e) {
           }
         });
         console.log(com);
-        serport = new serialport(com, { baudRate: rate });
+        serport = new SerialPort({ path: com, baudRate: rate });
         serport.on("error", function (err) {
           console.log("Error: ", err.message);
         });
@@ -400,7 +400,7 @@ function serviceSidebar(e) {
     var buffReqFl = Buffer.from(result);
 
     async function listSerialPorts() {
-      await serialport.list().then((ports, err) => {
+      await SerialPort.list().then((ports, err) => {
         if (err) {
           //document.getElementById('error').textContent = err.message
           console.log(err);
@@ -420,7 +420,7 @@ function serviceSidebar(e) {
           }
         });
         console.log(com);
-        serport = new serialport(com, { baudRate: rate });
+        serport = new SerialPort({ path: com, baudRate: rate });
         serport.on("error", function (err) {
           console.log("Error: ", err.message);
         });
@@ -486,89 +486,72 @@ function serviceSidebar(e) {
   }
   if (e == "ct") {
     manageCssServiceMode(serviceModeSectionId[4], serviceModeButtonId[4]);
-    var result = "6.e";
+    var result = "200.e";
     console.log(result);
     var buffReqFl = Buffer.from(result);
 
     async function listSerialPorts() {
-      await serialport.list().then((ports, err) => {
-        if (err) {
-          //document.getElementById('error').textContent = err.message
-          console.log(err);
-          return;
-        }
-
-        console.log("ports", ports);
-
-        if (ports.length === 0) {
-          //document.getElementById('error').textContent = 'No ports discovered'
-          console.log("No ports discovered");
-        }
-        var com;
-        ports.forEach(function (port) {
-          if (port.manufacturer == "FTDI") {
-            com = port.path;
-          }
-        });
-        console.log(com);
-        serport = new serialport(com, { baudRate: rate });
-        serport.on("error", function (err) {
-          console.log("Error: ", err.message);
-        });
-
-        serport.write(buffReqFl, (err) => {
+      try {
+        await SerialPort.list().then((ports, err) => {
           if (err) {
-            console.log(err.message);
-          } else {
-            console.log("buffReqFl :>> ", buffReqFl);
+            console.log(err);
+            return;
           }
-        });
-        serport.on("readable", function () {
-          let buffReceive = serport.read();
-          console.log("receive:", buffReceive);
-          console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-          if (buffReceive.toString("utf8") == "30") {
-            cmd_mic_app = buffReceive.toString("utf8");
-            msg = "There is an error!";
-            document.getElementById("msg").classList.remove("alert-success");
-            document.getElementById("msg").textContent = msg;
-            document.getElementById("msg").classList.add("alert-danger");
-          } else {
-            for (var i = 1; i <= 5; i++) {
-              if (buffReceive.toString("utf8") == "0") {
-                for (var p = 1; p <= 5; p++) {
-                  document
-                    .getElementById("flavour_" + p.toString())
-                    .classList.remove("btn-bg-tertiary");
-                  document
-                    .getElementById("flavour_" + p.toString())
-                    .classList.add("btn-bg-secondary");
-                }
-              } else {
-                if (buffReceive.toString("utf8") == i.toString()) {
-                  document
-                    .getElementById("flavour_" + i.toString())
-                    .classList.remove("btn-bg-secondary");
-                  document
-                    .getElementById("flavour_" + i.toString())
-                    .classList.add("btn-bg-tertiary");
-                } else {
-                  document
-                    .getElementById("flavour_" + i.toString())
-                    .classList.add("btn-bg-secondary");
-                  document
-                    .getElementById("flavour_" + i.toString())
-                    .classList.remove("btn-bg-tertiary");
-                }
+
+          console.log("ports", ports);
+
+          if (ports.length === 0) {
+            console.log("No ports discovered");
+          }
+          var com;
+          ports.forEach(function (port) {
+            if (port.manufacturer == "FTDI") {
+              if (port.serialNumber == "A100Y8LF") {
+                com = port.path;
               }
             }
-          }
+          });
+          console.log(com);
+          serport = new SerialPort({ path: com, baudRate: rate });
+          serport.on("error", function (err) {
+            console.log("Error: ", err.message);
+          });
 
-          serport.close(function (err) {
-            console.log("port closed", err);
-          }); // close the port after received command from mic
+          serport.write(buffReqFl, (err) => {
+            if (err) {
+              console.log(err.message);
+            } else {
+              console.log("buffReqFl :>> ", buffReqFl);
+            }
+          });
+          serport.on("readable", function () {
+            let buffReceive = serport.read();
+            console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
+            if (buffReceive.toString("utf8") == "30") {
+              cmd_mic_app = buffReceive.toString("utf8");
+              msg = "There is an error!";
+              document.getElementById("msg").classList.remove("alert-success");
+              document.getElementById("msg").textContent = msg;
+              document.getElementById("msg").classList.add("alert-danger");
+            } else {
+              const cmdCleanTime = buffReceive.toString("utf8").split(".");
+              const pumpCleanTime = cmdCleanTime[0] + " [s]";
+              const feederCleanTime = cmdCleanTime[1] + " [s]";
+              document.getElementById(
+                "peristaltic_pump_clean_time"
+              ).placeholder = pumpCleanTime;
+              document.getElementById("spiral_feeder_clean_time").placeholder =
+                feederCleanTime;
+            }
+
+            serport.close(function (err) {
+              console.log("port closed", err);
+            }); // close the port after received command from mic
+          });
         });
-      });
+      } catch (error) {
+        console.log("error :>> ", error);
+      }
     }
     setTimeout(() => {
       listSerialPorts();
@@ -577,88 +560,72 @@ function serviceSidebar(e) {
   }
   if (e == "ft") {
     manageCssServiceMode(serviceModeSectionId[5], serviceModeButtonId[5]);
-    var result = "6.e";
+    var result = "201.e";
     console.log(result);
     var buffReqFl = Buffer.from(result);
 
     async function listSerialPorts() {
-      await serialport.list().then((ports, err) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-
-        console.log("ports", ports);
-
-        if (ports.length === 0) {
-          //document.getElementById('error').textContent = 'No ports discovered'
-          console.log("No ports discovered");
-        }
-        var com;
-        ports.forEach(function (port) {
-          if (port.manufacturer == "FTDI") {
-            com = port.path;
-          }
-        });
-        console.log(com);
-        serport = new serialport(com, { baudRate: rate });
-        serport.on("error", function (err) {
-          console.log("Error: ", err.message);
-        });
-
-        serport.write(buffReqFl, (err) => {
+      try {
+        await SerialPort.list().then((ports, err) => {
           if (err) {
-            console.log(err.message);
-          } else {
-            console.log("buffReqFl :>> ", buffReqFl);
+            console.log(err);
+            return;
           }
-        });
-        serport.on("readable", function () {
-          let buffReceive = serport.read();
-          console.log("receive:", buffReceive);
-          console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-          if (buffReceive.toString("utf8") == "30") {
-            cmd_mic_app = buffReceive.toString("utf8");
-            msg = "There is an error!";
-            document.getElementById("msg").classList.remove("alert-success");
-            document.getElementById("msg").textContent = msg;
-            document.getElementById("msg").classList.add("alert-danger");
-          } else {
-            for (var i = 1; i <= 5; i++) {
-              if (buffReceive.toString("utf8") == "0") {
-                for (var p = 1; p <= 5; p++) {
-                  document
-                    .getElementById("flavour_" + p.toString())
-                    .classList.remove("btn-bg-tertiary");
-                  document
-                    .getElementById("flavour_" + p.toString())
-                    .classList.add("btn-bg-secondary");
-                }
-              } else {
-                if (buffReceive.toString("utf8") == i.toString()) {
-                  document
-                    .getElementById("flavour_" + i.toString())
-                    .classList.remove("btn-bg-secondary");
-                  document
-                    .getElementById("flavour_" + i.toString())
-                    .classList.add("btn-bg-tertiary");
-                } else {
-                  document
-                    .getElementById("flavour_" + i.toString())
-                    .classList.add("btn-bg-secondary");
-                  document
-                    .getElementById("flavour_" + i.toString())
-                    .classList.remove("btn-bg-tertiary");
-                }
+
+          console.log("ports", ports);
+
+          if (ports.length === 0) {
+            console.log("No ports discovered");
+          }
+          var com;
+          ports.forEach(function (port) {
+            if (port.manufacturer == "FTDI") {
+              if (port.serialNumber == "A100Y8LF") {
+                com = port.path;
               }
             }
-          }
+          });
+          console.log(com);
+          serport = new SerialPort({ path: com, baudRate: rate });
+          serport.on("error", function (err) {
+            console.log("Error: ", err.message);
+          });
 
-          serport.close(function (err) {
-            console.log("port closed", err);
-          }); // close the port after received command from mic
+          serport.write(buffReqFl, (err) => {
+            if (err) {
+              console.log(err.message);
+            } else {
+              console.log("buffReqFl :>> ", buffReqFl);
+            }
+          });
+          serport.on("readable", function () {
+            let buffReceive = serport.read();
+            console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
+            if (buffReceive.toString("utf8") == "30") {
+              cmd_mic_app = buffReceive.toString("utf8");
+              msg = "There is an error!";
+              document.getElementById("msg").classList.remove("alert-success");
+              document.getElementById("msg").textContent = msg;
+              document.getElementById("msg").classList.add("alert-danger");
+            } else {
+              const cmdFillTime = buffReceive.toString("utf8").split(".");
+              const pumpFillTime = cmdFillTime[0] + " [s]";
+              const feederFillTime = cmdFillTime[1] + " [s]";
+              document.getElementById(
+                "peristaltic_pump_fill_time"
+              ).placeholder = pumpFillTime;
+              document.getElementById("spiral_feeder_fill_time").placeholder =
+                feederFillTime;
+            }
+
+            serport.close(function (err) {
+              console.log("port closed", err);
+            }); // close the port after received command from mic
+          });
         });
-      });
+      } catch (error) {
+        console.log("error :>> ", error);
+      }
     }
     setTimeout(() => {
       listSerialPorts();

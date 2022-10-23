@@ -8,7 +8,7 @@ function supplementSelection(cmd, items) {
   const buffSetSupp = Buffer.from(result);
 
   const listSerialPorts = async () => {
-    await serialport.list().then((ports, err) => {
+    await SerialPort.list().then((ports, err) => {
       if (err) {
         console.log(err);
         return;
@@ -29,7 +29,7 @@ function supplementSelection(cmd, items) {
       });
       console.log(com);
 
-      serport = new serialport(com, { baudRate: rate });
+      serport = new SerialPort({path: com,  baudRate: rate });
       serport.on("error", function (err) {
         console.log("Error: ", err.message);
       });

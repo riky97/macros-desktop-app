@@ -172,7 +172,7 @@ const sendErogationRecipe = (cmd) => {
       console.log(sentBuff);
 
       async function listSerialPorts() {
-        await serialport.list().then((ports, err) => {
+        await SerialPort.list().then((ports, err) => {
           if (err) {
             console.log(err);
             return;
@@ -185,13 +185,14 @@ const sendErogationRecipe = (cmd) => {
           ports.forEach(function (port) {
             if (port.manufacturer == "FTDI") {
               if (port.serialNumber == "A100Y8LF") {
+                console.log("port.path", port.path)
                 com = port.path;
               }
             }
           });
           console.log(com); //A100Y8LF
 
-          serport = new serialport(com, { baudRate: rate });
+          serport = new SerialPort({path: com,  baudRate: rate });
           serport.on("error", function (err) {
             console.log("Error: ", err.message);
           });
