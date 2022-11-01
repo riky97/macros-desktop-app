@@ -16,8 +16,7 @@ const serviceModeButtonId = [
 ];
 
 const manageCssServiceMode = (section, button) => {
-  for (let index = 0; index < serviceModeSectionId.length; index++) {
-    const element = serviceModeSectionId[index];
+  for (const element of serviceModeSectionId) {
     if (element === section) {
       console.log("section", element);
       document.getElementById(element).style.display = "block";
@@ -25,8 +24,7 @@ const manageCssServiceMode = (section, button) => {
       document.getElementById(element).style.display = "none";
     }
   }
-  for (let index = 0; index < serviceModeButtonId.length; index++) {
-    const element = serviceModeButtonId[index];
+  for (const element of serviceModeButtonId) {
     if (element === button) {
       document.getElementById(element).style.opacity = "1";
     } else {
@@ -50,7 +48,6 @@ function openServiceMode() {
     CloseModal(1);
     document.getElementById("section-erogation").style.display = "none";
     document.getElementById("section-service").style.display = "block";
-    //document.getElementById("text-p").textContent="Service Mode";
     document.getElementById("text-p").style.display = "none";
     document.getElementById("sidebarServiceMenu").style.display = "flex";
     document.getElementById("openmenu").style.display = "flex";
@@ -94,112 +91,119 @@ function serviceSidebar(e) {
   if (e == "sm") {
     manageCssServiceMode(serviceModeSectionId[0], serviceModeButtonId[0]);
 
-    var result = "8.e";
+    let result = "8.e";
 
     console.log(result);
-    var buffReqCleanFill = Buffer.from(result);
+    let buffReqCleanFill = Buffer.from(result);
 
     async function listSerialPorts() {
       await SerialPort.list().then((ports, err) => {
-        if (err) {
-          //document.getElementById('error').textContent = err.message
-          console.log(err);
-          return;
-        }
-
-        console.log("ports", ports);
-
-        if (ports.length === 0) {
-          //document.getElementById('error').textContent = 'No ports discovered'
-          console.log("No ports discovered");
-        }
-        var com;
-        ports.forEach(function (port) {
-          if (port.manufacturer == "FTDI") {
-            if (port.serialNumber == "A100Y8LF") {
-              com = port.path;
-            }
-          }
-        });
-        console.log(com);
-        serport = new SerialPort({ path: com, baudRate: rate });
-        serport.on("error", function (err) {
-          console.log("Error: ", err.message);
-        });
-
-        serport.write(buffReqCleanFill, (err) => {
+        try {
           if (err) {
-            console.log(err.message);
-          } else {
-            console.log("buffReqSupp :>> ", buffReqCleanFill);
+            //document.getElementById('error').textContent = err.message
+            console.log(err);
+            return;
           }
-        });
-        serport.on("readable", function () {
-          let buffReceive = serport.read();
-          console.log("receive:", buffReceive);
-          console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-          if (buffReceive.toString("utf8") == "30") {
-            cmd_mic_app = buffReceive.toString("utf8");
-            msg = "There is an error!";
-            document.getElementById("msg").classList.remove("alert-success");
-            document.getElementById("msg").textContent = msg;
-            document.getElementById("msg").classList.add("alert-danger");
-          } else {
-            if (buffReceive.toString("utf8") == "0") {
-              for (var p = 3; p <= 4; p++) {
+
+          console.log("ports", ports);
+
+          if (ports.length === 0) {
+            console.log("No ports discovered");
+          }
+          let com;
+          ports.forEach(function (port) {
+            if (port.manufacturer == "FTDI") {
+              if (port.serialNumber == "A100Y8LF") {
+                com = port.path;
+              }
+            }
+          });
+          console.log(com);
+          serport = new SerialPort({ path: com, baudRate: rate });
+
+          serport.on("error", function (err) {
+            console.log("Error: ", err.message);
+            serport.close(function (err) {
+              console.log("port closed", err);
+            }); // close the port after received command from mic
+          });
+
+          serport.write(buffReqCleanFill, (err) => {
+            if (err) {
+              console.log(err.message);
+            } else {
+              console.log("buffReqSupp :>> ", buffReqCleanFill);
+            }
+          });
+          serport.on("readable", function () {
+            let buffReceive = serport.read();
+            console.log("receive:", buffReceive);
+            console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
+            if (buffReceive.toString("utf8") == "30") {
+              cmd_mic_app = buffReceive.toString("utf8");
+              msg = "There is an error!";
+              document.getElementById("msg").classList.remove("alert-success");
+              document.getElementById("msg").textContent = msg;
+              document.getElementById("msg").classList.add("alert-danger");
+            } else {
+              if (buffReceive.toString("utf8") == "0") {
+                for (let p = 3; p <= 4; p++) {
+                  document
+                    .getElementById("service_" + p.toString())
+                    .classList.remove("btn-bg-tertiary");
+                  document
+                    .getElementById("service_" + p.toString())
+                    .classList.add("btn-bg-secondary");
+                }
+              }
+              if (buffReceive.toString("utf8") == "1") {
                 document
-                  .getElementById("service_" + p.toString())
+                  .getElementById("service_3")
                   .classList.remove("btn-bg-tertiary");
                 document
-                  .getElementById("service_" + p.toString())
+                  .getElementById("service_3")
                   .classList.add("btn-bg-secondary");
-              }
-            }
-            if (buffReceive.toString("utf8") == "1") {
-              document
-                .getElementById("service_3")
-                .classList.remove("btn-bg-tertiary");
-              document
-                .getElementById("service_3")
-                .classList.add("btn-bg-secondary");
-              document
-                .getElementById("service_4")
-                .classList.add("btn-bg-tertiary");
-              document
-                .getElementById("service_4")
-                .classList.remove("btn-bg-secondary");
-            }
-
-            if (buffReceive.toString("utf8") == "2") {
-              document
-                .getElementById("service_4")
-                .classList.remove("btn-bg-tertiary");
-              document
-                .getElementById("service_4")
-                .classList.add("btn-bg-secondary");
-              document
-                .getElementById("service_3")
-                .classList.add("btn-bg-tertiary");
-              document
-                .getElementById("service_3")
-                .classList.remove("btn-bg-secondary");
-            }
-            if (buffReceive.toString("utf8") == "3") {
-              for (var p = 3; p <= 4; p++) {
                 document
-                  .getElementById("service_" + p.toString())
+                  .getElementById("service_4")
                   .classList.add("btn-bg-tertiary");
                 document
-                  .getElementById("service_" + p.toString())
+                  .getElementById("service_4")
                   .classList.remove("btn-bg-secondary");
               }
-            }
-          }
 
-          serport.close(function (err) {
-            console.log("port closed", err);
-          }); // close the port after received command from mic
-        });
+              if (buffReceive.toString("utf8") == "2") {
+                document
+                  .getElementById("service_4")
+                  .classList.remove("btn-bg-tertiary");
+                document
+                  .getElementById("service_4")
+                  .classList.add("btn-bg-secondary");
+                document
+                  .getElementById("service_3")
+                  .classList.add("btn-bg-tertiary");
+                document
+                  .getElementById("service_3")
+                  .classList.remove("btn-bg-secondary");
+              }
+              if (buffReceive.toString("utf8") == "3") {
+                for (let p = 3; p <= 4; p++) {
+                  document
+                    .getElementById("service_" + p.toString())
+                    .classList.add("btn-bg-tertiary");
+                  document
+                    .getElementById("service_" + p.toString())
+                    .classList.remove("btn-bg-secondary");
+                }
+              }
+            }
+
+            serport.close(function (err) {
+              console.log("port closed", err);
+            }); // close the port after received command from mic
+          });
+        } catch (error) {
+          console.log("error", error);
+        }
       });
     }
     setTimeout(() => {
@@ -210,10 +214,10 @@ function serviceSidebar(e) {
   if (e == "ss") {
     manageCssServiceMode(serviceModeSectionId[1], serviceModeButtonId[1]);
 
-    var result = "4.e";
+    let result = "4.e";
 
     console.log(result);
-    var buffReqSupp = Buffer.from(result);
+    let buffReqSupp = Buffer.from(result);
 
     async function listSerialPorts() {
       await SerialPort.list().then((ports, err) => {
@@ -229,7 +233,7 @@ function serviceSidebar(e) {
           //document.getElementById('error').textContent = 'No ports discovered'
           console.log("No ports discovered");
         }
-        var com;
+        let com;
         ports.forEach(function (port) {
           if (port.manufacturer == "FTDI") {
             if (port.serialNumber == "A100Y8LF") {
@@ -261,9 +265,9 @@ function serviceSidebar(e) {
             document.getElementById("msg").textContent = msg;
             document.getElementById("msg").classList.add("alert-danger");
           } else {
-            for (var i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 4; i++) {
               if (buffReceive.toString("utf8") == "0") {
-                for (var p = 1; p <= 4; p++) {
+                for (let p = 1; p <= 4; p++) {
                   document
                     .getElementById("supplement_" + p.toString())
                     .classList.remove("btn-bg-tertiary");
@@ -304,9 +308,9 @@ function serviceSidebar(e) {
   }
   if (e == "fs") {
     manageCssServiceMode(serviceModeSectionId[2], serviceModeButtonId[2]);
-    var result = "6.e";
+    let result = "6.e";
     console.log(result);
-    var buffReqFl = Buffer.from(result);
+    let buffReqFl = Buffer.from(result);
 
     async function listSerialPorts() {
       await SerialPort.list().then((ports, err) => {
@@ -322,7 +326,7 @@ function serviceSidebar(e) {
           //document.getElementById('error').textContent = 'No ports discovered'
           console.log("No ports discovered");
         }
-        var com;
+        let com;
         ports.forEach(function (port) {
           if (port.manufacturer == "FTDI") {
             com = port.path;
@@ -352,9 +356,9 @@ function serviceSidebar(e) {
             document.getElementById("msg").textContent = msg;
             document.getElementById("msg").classList.add("alert-danger");
           } else {
-            for (var i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 5; i++) {
               if (buffReceive.toString("utf8") == "0") {
-                for (var p = 1; p <= 5; p++) {
+                for (let p = 1; p <= 5; p++) {
                   document
                     .getElementById("flavour_" + p.toString())
                     .classList.remove("btn-bg-tertiary");
@@ -395,9 +399,9 @@ function serviceSidebar(e) {
   }
   if (e == "et") {
     manageCssServiceMode(serviceModeSectionId[3], serviceModeButtonId[3]);
-    var result = "6.e";
+    let result = "6.e";
     console.log(result);
-    var buffReqFl = Buffer.from(result);
+    let buffReqFl = Buffer.from(result);
 
     async function listSerialPorts() {
       await SerialPort.list().then((ports, err) => {
@@ -413,7 +417,7 @@ function serviceSidebar(e) {
           //document.getElementById('error').textContent = 'No ports discovered'
           console.log("No ports discovered");
         }
-        var com;
+        let com;
         ports.forEach(function (port) {
           if (port.manufacturer == "FTDI") {
             com = port.path;
@@ -443,9 +447,9 @@ function serviceSidebar(e) {
             document.getElementById("msg").textContent = msg;
             document.getElementById("msg").classList.add("alert-danger");
           } else {
-            for (var i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 5; i++) {
               if (buffReceive.toString("utf8") == "0") {
-                for (var p = 1; p <= 5; p++) {
+                for (let p = 1; p <= 5; p++) {
                   document
                     .getElementById("flavour_" + p.toString())
                     .classList.remove("btn-bg-tertiary");
@@ -486,9 +490,9 @@ function serviceSidebar(e) {
   }
   if (e == "ct") {
     manageCssServiceMode(serviceModeSectionId[4], serviceModeButtonId[4]);
-    var result = "200.e";
+    let result = "200.e";
     console.log(result);
-    var buffReqFl = Buffer.from(result);
+    let buffReqFl = Buffer.from(result);
 
     async function listSerialPorts() {
       try {
@@ -503,7 +507,7 @@ function serviceSidebar(e) {
           if (ports.length === 0) {
             console.log("No ports discovered");
           }
-          var com;
+          let com;
           ports.forEach(function (port) {
             if (port.manufacturer == "FTDI") {
               if (port.serialNumber == "A100Y8LF") {
@@ -560,9 +564,9 @@ function serviceSidebar(e) {
   }
   if (e == "ft") {
     manageCssServiceMode(serviceModeSectionId[5], serviceModeButtonId[5]);
-    var result = "201.e";
+    let result = "201.e";
     console.log(result);
-    var buffReqFl = Buffer.from(result);
+    let buffReqFl = Buffer.from(result);
 
     async function listSerialPorts() {
       try {
@@ -577,7 +581,7 @@ function serviceSidebar(e) {
           if (ports.length === 0) {
             console.log("No ports discovered");
           }
-          var com;
+          let com;
           ports.forEach(function (port) {
             if (port.manufacturer == "FTDI") {
               if (port.serialNumber == "A100Y8LF") {

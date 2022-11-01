@@ -354,7 +354,7 @@
               <div class="input-container">
                 <input
                   type="number"
-                  class="input-field input-lead input-service-mode"
+                  class="input-field input-lead input-service-mode input-section-time"
                   id="peristaltic_pump_clean_time"
                   max="255"
                   min="0"
@@ -364,7 +364,7 @@
                 <button
                   id="send_peristaltic_pump_clean_time"
                   type="text"
-                  class="btn btn-small btn-bg-primary"
+                  class="btn btn-small btn-bg-primary btn-section-time"
                   onclick="sendData(100,0)"
                 >
                   Send
@@ -385,7 +385,7 @@
               <div class="input-container">
                 <input
                   type="number"
-                  class="input-field input-lead input-service-mode"
+                  class="input-field input-lead input-service-mode input-section-time"
                   id="spiral_feeder_clean_time"
                   max="500"
                   min="0"
@@ -397,7 +397,7 @@
                 <button
                   id="send_spiral_feeder_clean_time"
                   type="text"
-                  class="btn btn-small btn-bg-primary"
+                  class="btn btn-small btn-bg-primary btn-section-time"
                   onclick="sendData(100,1)"
                 >
                   Send
@@ -420,7 +420,7 @@
               <div class="input-container">
                 <input
                   type="number"
-                  class="input-field input-lead input-service-mode"
+                  class="input-field input-lead input-service-mode input-section-time"
                   id="peristaltic_pump_fill_time"
                   max="255"
                   min="0"
@@ -430,7 +430,7 @@
                 <button
                   id="send_peristaltic_pump_fill_time"
                   type="text"
-                  class="btn btn-small btn-bg-primary"
+                  class="btn btn-small btn-bg-primary btn-section-time"
                   onclick="sendData(101,0)"
                 >
                   Send
@@ -451,7 +451,7 @@
               <div class="input-container">
                 <input
                   type="number"
-                  class="input-field input-lead input-service-mode"
+                  class="input-field input-lead input-service-mode input-section-time"
                   id="spiral_feeder_fill_time"
                   max="500"
                   min="0"
@@ -463,7 +463,7 @@
                 <button
                   id="send_spiral_feeder_fill_time"
                   type="text"
-                  class="btn btn-small btn-bg-primary"
+                  class="btn btn-small btn-bg-primary btn-section-time"
                   onclick="sendData(101,1)"
                 >
                   Send
@@ -483,18 +483,26 @@
                 <h5>Confirm to erogation</h5>
                 <div style="text-align: center">
                   <div>
-                    <p><b>User_id:</b> <span id="modal-username"></span></p>
-                  </div>
-                  <div>
-                    <p><b>Water:</b> <span id="modal-water"></span></p>
-                  </div>
-                  <div>
                     <p>
-                      <b>Supplement:</b> <span id="modal-supplement"></span>
+                      <strong>User_id:</strong>
+                      <span id="modal-username"></span>
                     </p>
                   </div>
                   <div>
-                    <p><b>Flavour:</b> <span id="modal-flavour"></span></p>
+                    <p>
+                      <strong>Water:</strong> <span id="modal-water"></span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>
+                      <strong>Supplement:</strong>
+                      <span id="modal-supplement"></span>
+                    </p>
+                  </div>
+                  <div>
+                    <p>
+                      <strong>Flavour:</strong> <span id="modal-flavour"></span>
+                    </p>
                   </div>
                 </div>
                 <span
@@ -521,9 +529,9 @@
                 <h5>Enter password:</h5>
                 <div>
                   <div class="input-container">
-                    <i class="input-icon"
+                    <em class="input-icon"
                       ><img src="./icon/password.svg" alt=""
-                    /></i>
+                    /></em>
                     <input
                       type="password"
                       class="input-field input-lead"
