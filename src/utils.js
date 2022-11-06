@@ -73,8 +73,8 @@ const showErrorMessage = (msg) => {
 };
 
 const showSuccessMessage = (msg) => {
-  document.getElementById("msg").classList.remove("alert-success");
-  document.getElementById("msg").classList.add("alert-danger");
+  document.getElementById("msg").classList.remove("alert-danger");
+  document.getElementById("msg").classList.add("alert-success");
   document.getElementById("msg").textContent = msg;
 };
 
