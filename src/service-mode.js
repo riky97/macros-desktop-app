@@ -448,9 +448,9 @@ function serviceSidebar(e) {
               document.getElementById("msg").classList.add("alert-danger");
             } else {
               const cmdErogationTime = buffReceive.toString("utf8").split(".");
-              const valvFlow = cmdErogationTime[0] + " [ml/s * 10]";
-              const pumpFlow = cmdErogationTime[1] + " [ml/s * 100]";
-              const feederFlow = cmdErogationTime[2] + " [gr/s * 100]";
+              const valvFlow = cmdErogationTime[0] + " [ml/s x10]";
+              const pumpFlow = cmdErogationTime[1] + " [ml/s x100]";
+              const feederFlow = cmdErogationTime[2] + " [gr/s x100]";
 
               document.getElementById("water_erogation_time").placeholder =
                 valvFlow;

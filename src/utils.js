@@ -65,3 +65,23 @@ function closemenu() {
   document.getElementById("sidebarServiceMenu").classList.add("closed");
   document.getElementById("sidebar_section").style.display = "none";
 }
+
+const showErrorMessage = (msg) => {
+  document.getElementById("msg").classList.remove("alert-danger");
+  document.getElementById("msg").classList.add("alert-success");
+  document.getElementById("msg").textContent = msg;
+};
+
+const showSuccessMessage = (msg) => {
+  document.getElementById("msg").classList.remove("alert-success");
+  document.getElementById("msg").classList.add("alert-danger");
+  document.getElementById("msg").textContent = msg;
+};
+
+const cleanMessage = () => {
+  setTimeout(() => {
+    document.getElementById("msg").classList.remove("alert-success");
+    document.getElementById("msg").classList.remove("alert-danger");
+    document.getElementById("msg").textContent = "";
+  }, 5000);
+};

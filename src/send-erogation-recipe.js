@@ -185,14 +185,14 @@ const sendErogationRecipe = (cmd) => {
           ports.forEach(function (port) {
             if (port.manufacturer == "FTDI") {
               if (port.serialNumber == "A100Y8LF") {
-                console.log("port.path", port.path)
+                console.log("port.path", port.path);
                 com = port.path;
               }
             }
           });
           console.log(com); //A100Y8LF
 
-          serport = new SerialPort({path: com,  baudRate: rate });
+          serport = new SerialPort({ path: com, baudRate: rate });
           serport.on("error", function (err) {
             console.log("Error: ", err.message);
           });
@@ -226,8 +226,7 @@ const sendErogationRecipe = (cmd) => {
                   .classList.remove("alert-success");
               }, 2000);
               //res.json({cmd_mic:cmd_mic_app,message:msg});
-            }
-            if (buffReceive.toString("utf8") == "11") {
+            } else if (buffReceive.toString("utf8") == "11") {
               cmd_mic_app = buffReceive.toString("utf8");
               msg = "Erogation completed successfully!";
               closeLoader();
@@ -247,16 +246,14 @@ const sendErogationRecipe = (cmd) => {
                   .getElementById("msg")
                   .classList.remove("alert-success");
               }, 2000);
-            }
-            if (buffReceive.toString("utf8") == "12") {
+            } else if (buffReceive.toString("utf8") == "12") {
               cmd_mic_app = buffReceive.toString("utf8");
               msg = "Error in receiving the recipe!";
               document.getElementById("msg").classList.remove("alert-success");
               document.getElementById("msg").textContent = msg;
               document.getElementById("msg").classList.add("alert-danger");
               //res.json({cmd_mic:cmd_mic_app,message:msg});
-            }
-            if (buffReceive.toString("utf8") == "13") {
+            } else if (buffReceive.toString("utf8") == "13") {
               cmd_mic_app = buffReceive.toString("utf8");
               msg = "Erogation failed!";
               closeLoader();
@@ -264,6 +261,8 @@ const sendErogationRecipe = (cmd) => {
               document.getElementById("msg").textContent = msg;
               document.getElementById("msg").classList.add("alert-danger");
               //res.json({cmd_mic:cmd_mic_app,message:msg});
+            } else {
+              closeLoader();
             }
 
             serport.close(function (err) {

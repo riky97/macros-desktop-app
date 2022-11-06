@@ -66,7 +66,7 @@ const sendData = (cmd, item) => {
               }
               if (buffReceive.toString("utf8") == "20") {
                 document.getElementById("water_erogation_time").placeholder =
-                  value + " [ml/s * 10]";
+                  value + " [ml/s x10]";
                 document.getElementById("water_erogation_time").value = "";
                 const msg = "Value updated!";
                 document.getElementById("msg").classList.remove("alert-danger");
@@ -142,21 +142,16 @@ const sendData = (cmd, item) => {
               if (buffReceive.toString("utf8") == "30") {
                 cmd_mic_app = buffReceive.toString("utf8");
                 msg = "Value not in range [1-255]!";
-                document
-                  .getElementById("msg")
-                  .classList.remove("alert-success");
-                document.getElementById("msg").textContent = msg;
-                document.getElementById("msg").classList.add("alert-danger");
+                showErrorMessage(msg);
               }
               if (buffReceive.toString("utf8") == "20") {
                 document.getElementById("flavour_erogation_time").placeholder =
-                  value + " [ml/s * 100]";
+                  value + " [ml/s x100]";
                 document.getElementById("flavour_erogation_time").value = "";
                 const msg = "Value updated!";
-                document.getElementById("msg").classList.remove("alert-danger");
-                document.getElementById("msg").textContent = msg;
-                document.getElementById("msg").classList.add("alert-success");
+                showSuccessMessage(msg);
               }
+              cleanMessage();
 
               serport.close(function (err) {
                 console.log("port closed", err);
@@ -237,7 +232,7 @@ const sendData = (cmd, item) => {
               if (buffReceive.toString("utf8") == "20") {
                 document.getElementById(
                   "supplement_erogation_time"
-                ).placeholder = value + " [gr/s * 100]";
+                ).placeholder = value + " [gr/s x100]";
                 document.getElementById("supplement_erogation_time").value = "";
                 const msg = "Value updated!";
                 document.getElementById("msg").classList.remove("alert-danger");
