@@ -19,15 +19,11 @@ const sendData = (cmd, item) => {
         async function listSerialPorts() {
           await SerialPort.list().then((ports, err) => {
             if (err) {
-              //document.getElementById('error').textContent = err.message
               console.log(err);
               return;
             }
-
             console.log("ports", ports);
-
             if (ports.length === 0) {
-              //document.getElementById('error').textContent = 'No ports discovered'
               console.log("No ports discovered");
             }
             let com;
@@ -52,20 +48,18 @@ const sendData = (cmd, item) => {
               }
             });
             serport.on("readable", function () {
-              let buffReceive = serport.read();
+              const buffReceive = serport.read();
+              const cmd_mic_app = buffReceive.toString("utf8");
               console.log("receive:", buffReceive);
-              console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-              if (buffReceive.toString("utf8") == "30") {
-                cmd_mic_app = buffReceive.toString("utf8");
-                msg = "Value not in range [1-255]!";
-                showErrorMessage(msg);
+              console.log("CMD_MICRO >> ", cmd_mic_app);
+              if (cmd_mic_app == "30") {
+                showErrorMessage("Value not in range [1-255]!");
               }
-              if (buffReceive.toString("utf8") == "20") {
+              if (cmd_mic_app == "20") {
                 document.getElementById("water_erogation_time").placeholder =
                   value + " [ml/s x10]";
                 document.getElementById("water_erogation_time").value = "";
-                const msg = "Value updated!";
-                showSuccessMessage(msg);
+                showSuccessMessage("Value updated!");
               }
               cleanMessage();
 
@@ -77,7 +71,6 @@ const sendData = (cmd, item) => {
         }
         setTimeout(() => {
           listSerialPorts();
-          //closeLoader();
         }, 100);
       }
       if (item === 1) {
@@ -131,23 +124,20 @@ const sendData = (cmd, item) => {
               }
             });
             serport.on("readable", function () {
-              let buffReceive = serport.read();
+              const buffReceive = serport.read();
+              const cmd_mic_app = buffReceive.toString("utf8");
               console.log("receive:", buffReceive);
-              console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-              if (buffReceive.toString("utf8") == "30") {
-                cmd_mic_app = buffReceive.toString("utf8");
-                const msg = "Value not in range [1-255]!";
-                showErrorMessage(msg);
+              console.log("CMD_MICRO >> ", cmd_mic_app);
+              if (cmd_mic_app == "30") {
+                showErrorMessage("Value not in range [1-255]!");
               }
-              if (buffReceive.toString("utf8") == "20") {
+              if (cmd_mic_app == "20") {
                 document.getElementById("flavour_erogation_time").placeholder =
                   value + " [ml/s x100]";
                 document.getElementById("flavour_erogation_time").value = "";
-                const msg = "Value updated!";
-                showSuccessMessage(msg);
+                showSuccessMessage("Value updated!");
               }
               cleanMessage();
-
               serport.close(function (err) {
                 console.log("port closed", err);
               }); // close the port after received command from mic
@@ -179,15 +169,11 @@ const sendData = (cmd, item) => {
         async function listSerialPorts() {
           await SerialPort.list().then((ports, err) => {
             if (err) {
-              //document.getElementById('error').textContent = err.message
               console.log(err);
               return;
             }
-
             console.log("ports", ports);
-
             if (ports.length === 0) {
-              //document.getElementById('error').textContent = 'No ports discovered'
               console.log("No ports discovered");
             }
             let com;
@@ -212,21 +198,19 @@ const sendData = (cmd, item) => {
               }
             });
             serport.on("readable", function () {
-              let buffReceive = serport.read();
+              const buffReceive = serport.read();
+              const cmd_mic_app = buffReceive.toString("utf8");
               console.log("receive:", buffReceive);
-              console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-              if (buffReceive.toString("utf8") == "30") {
-                cmd_mic_app = buffReceive.toString("utf8");
-                msg = "Value not in range [1-255]!";
-                showErrorMessage(msg);
+              console.log("CMD_MICRO >> ", cmd_mic_app);
+              if (cmd_mic_app == "30") {
+                showErrorMessage("Value not in range [1-255]!");
               }
-              if (buffReceive.toString("utf8") == "20") {
+              if (cmd_mic_app == "20") {
                 document.getElementById(
                   "supplement_erogation_time"
                 ).placeholder = value + " [gr/s x100]";
                 document.getElementById("supplement_erogation_time").value = "";
-                const msg = "Value updated!";
-                showSuccessMessage(msg);
+                showSuccessMessage("Value updated!");
               }
               cleanMessage();
               serport.close(function (err) {
@@ -266,9 +250,7 @@ const sendData = (cmd, item) => {
               console.log(err);
               return;
             }
-
             console.log("ports", ports);
-
             if (ports.length === 0) {
               //document.getElementById('error').textContent = 'No ports discovered'
               console.log("No ports discovered");
@@ -295,25 +277,22 @@ const sendData = (cmd, item) => {
               }
             });
             serport.on("readable", function () {
-              let buffReceive = serport.read();
+              const buffReceive = serport.read();
+              const cmd_mic_app = buffReceive.toString("utf8");
               console.log("receive:", buffReceive);
-              console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-              if (buffReceive.toString("utf8") == "30") {
-                cmd_mic_app = buffReceive.toString("utf8");
-                msg = "Value not in range [1-30s]!";
-                showErrorMessage(msg);
+              console.log("CMD_MICRO >> ", cmd_mic_app);
+              if (cmd_mic_app == "30") {
+                showErrorMessage("Value not in range [1-30s]!");
               }
-              if (buffReceive.toString("utf8") == "20") {
+              if (cmd_mic_app == "20") {
                 document.getElementById(
                   "peristaltic_pump_clean_time"
                 ).placeholder = value + " [s]";
                 document.getElementById("peristaltic_pump_clean_time").value =
                   "";
-                const msg = "Value updated!";
-                showSuccessMessage(msg);
+                showSuccessMessage("Value updated!");
               }
               cleanMessage();
-
               serport.close(function (err) {
                 console.log("port closed", err);
               }); // close the port after received command from mic
@@ -343,7 +322,6 @@ const sendData = (cmd, item) => {
         async function listSerialPorts() {
           await SerialPort.list().then((ports, err) => {
             if (err) {
-              //document.getElementById('error').textContent = err.message
               console.log(err);
               return;
             }
@@ -351,7 +329,6 @@ const sendData = (cmd, item) => {
             console.log("ports", ports);
 
             if (ports.length === 0) {
-              //document.getElementById('error').textContent = 'No ports discovered'
               console.log("No ports discovered");
             }
             let com;
@@ -376,24 +353,21 @@ const sendData = (cmd, item) => {
               }
             });
             serport.on("readable", function () {
-              let buffReceive = serport.read();
+              const buffReceive = serport.read();
+              const cmd_mic_app = buffReceive.toString("utf8");
               console.log("receive:", buffReceive);
-              console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-              if (buffReceive.toString("utf8") == "30") {
-                cmd_mic_app = buffReceive.toString("utf8");
-                msg = "Value not in range [1-60s]!";
-                showErrorMessage(msg);
+              console.log("CMD_MICRO >> ", cmd_mic_app);
+              if (cmd_mic_app == "30") {
+                showErrorMessage("Value not in range [1-60s]!");
               }
-              if (buffReceive.toString("utf8") == "20") {
+              if (cmd_mic_app == "20") {
                 document.getElementById(
                   "spiral_feeder_clean_time"
                 ).placeholder = value + " [s]";
                 document.getElementById("spiral_feeder_clean_time").value = "";
-                const msg = "Value updated!";
-                showSuccessMessage(msg);
+                showSuccessMessage("Value updated!");
               }
               cleanMessage();
-
               serport.close(function (err) {
                 console.log("port closed", err);
               }); // close the port after received command from mic
@@ -402,7 +376,6 @@ const sendData = (cmd, item) => {
         }
         setTimeout(() => {
           listSerialPorts();
-          //closeLoader();
         }, 100);
       }
       break;
@@ -427,7 +400,6 @@ const sendData = (cmd, item) => {
         async function listSerialPorts() {
           await SerialPort.list().then((ports, err) => {
             if (err) {
-              //document.getElementById('error').textContent = err.message
               console.log(err);
               return;
             }
@@ -435,7 +407,6 @@ const sendData = (cmd, item) => {
             console.log("ports", ports);
 
             if (ports.length === 0) {
-              //document.getElementById('error').textContent = 'No ports discovered'
               console.log("No ports discovered");
             }
             let com;
@@ -460,22 +431,20 @@ const sendData = (cmd, item) => {
               }
             });
             serport.on("readable", function () {
-              let buffReceive = serport.read();
+              const buffReceive = serport.read();
+              const cmd_mic_app = buffReceive.toString("utf8");
               console.log("receive:", buffReceive);
-              console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-              if (buffReceive.toString("utf8") == "30") {
-                cmd_mic_app = buffReceive.toString("utf8");
-                msg = "Value not in range [1-30s]!";
-                showErrorMessage(msg);
+              console.log("CMD_MICRO >> ", cmd_mic_app);
+              if (cmd_mic_app == "30") {
+                showErrorMessage("Value not in range [1-30s]!");
               }
-              if (buffReceive.toString("utf8") == "20") {
+              if (cmd_mic_app == "20") {
                 document.getElementById(
                   "peristaltic_pump_fill_time"
                 ).placeholder = value + " [s]";
                 document.getElementById("peristaltic_pump_fill_time").value =
                   "";
-                const msg = "Value updated!";
-                showSuccessMessage(msg);
+                showSuccessMessage("Value updated!");
               }
               cleanMessage();
               serport.close(function (err) {
@@ -537,20 +506,18 @@ const sendData = (cmd, item) => {
               }
             });
             serport.on("readable", function () {
-              let buffReceive = serport.read();
+              const buffReceive = serport.read();
+              const cmd_mic_app = buffReceive.toString("utf8");
               console.log("receive:", buffReceive);
-              console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-              if (buffReceive.toString("utf8") == "30") {
-                cmd_mic_app = buffReceive.toString("utf8");
-                msg = "Value not in range [1-60s]!";
-                showErrorMessage(msg);
+              console.log("CMD_MICRO >> ", cmd_mic_app);
+              if (cmd_mic_app == "30") {
+                showErrorMessage("Value not in range [1-60s]!");
               }
-              if (buffReceive.toString("utf8") == "20") {
+              if (cmd_mic_app == "20") {
                 document.getElementById("spiral_feeder_fill_time").placeholder =
                   value + " [s]";
                 document.getElementById("spiral_feeder_fill_time").value = "";
-                const msg = "Value updated!";
-                showSuccessMessage(msg);
+                showSuccessMessage("Value updated!");
               }
               cleanMessage();
 

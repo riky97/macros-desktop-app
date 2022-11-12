@@ -1,14 +1,13 @@
 /********************USER EXPERIENCE**************************/
 
 const sendErogationRecipe = (cmd) => {
-  var cmd = cmd;
   if (cmd == 1) {
     CloseModal(0);
   }
-  var user_id = document.getElementById("username").value;
-  var water = document.getElementById("water").value;
-  var supplement = document.getElementById("supplement").value;
-  var flavour = document.getElementById("flavour").value;
+  let user_id = document.getElementById("username").value;
+  let water = document.getElementById("water").value;
+  let supplement = document.getElementById("supplement").value;
+  let flavour = document.getElementById("flavour").value;
   console.log("inputUsername :>> ", user_id);
   console.log("inputUsername :>> ", water);
   console.log("inputUsername :>> ", supplement);
@@ -22,9 +21,7 @@ const sendErogationRecipe = (cmd) => {
     isNaN(parseInt(supplement)) ||
     isNaN(parseInt(flavour))
   ) {
-    document.getElementById("msg").classList.remove("alert-success");
-    document.getElementById("msg").classList.add("alert-danger");
-    document.getElementById("msg").textContent = "There is an error!";
+    showErrorMessage("There is an error!");
     if (parseInt(user_id) > 0 && parseInt(user_id) <= 255) {
       document
         .getElementById("error-username")
@@ -110,16 +107,13 @@ const sendErogationRecipe = (cmd) => {
           .classList.remove("alert-danger");
         document.getElementById("error-flavour").textContent = "";
       }
-      document.getElementById("msg").classList.remove("alert-success");
-      document.getElementById("msg").classList.add("alert-danger");
-      document.getElementById("msg").textContent = "There is an error!";
+      showErrorMessage("There is an error!");
     } else {
       if (cmd == 1) {
-        showLoader();
-      } // mostra il loader di erogazione in corso
+        showLoader(); // mostra il loader di erogazione in corso
+      }
       //se non ci sono errori rimuovo classi e testi
-      document.getElementById("msg").classList.remove("alert-danger");
-      document.getElementById("msg").textContent = "";
+      cleanMessage(0);
       document
         .getElementById("error-username")
         .classList.remove("alert-danger");
@@ -143,15 +137,15 @@ const sendErogationRecipe = (cmd) => {
         function dec2Bin(dec) {
           return (dec >>> 0).toString(2);
         }
-        var binary = dec2Bin(water);
+        let binary = dec2Bin(water);
         console.log("binary :>> ", binary);
         water_msb = 1;
         sub_lsb = binary.substring(1);
         water_lsb = parseInt(sub_lsb, 2);
       }
-      var cs = cmd ^ user_id ^ water_msb ^ water_lsb ^ supplement ^ flavour;
+      let cs = cmd ^ user_id ^ water_msb ^ water_lsb ^ supplement ^ flavour;
 
-      var result =
+      let result =
         cmd.toString() +
         "." +
         user_id.toString() +
@@ -168,9 +162,8 @@ const sendErogationRecipe = (cmd) => {
         ".e";
 
       console.log(result);
-      var sentBuff = Buffer.from(result);
+      let sentBuff = Buffer.from(result);
       console.log(sentBuff);
-
       async function listSerialPorts() {
         await SerialPort.list().then((ports, err) => {
           if (err) {
@@ -181,7 +174,7 @@ const sendErogationRecipe = (cmd) => {
           if (ports.length === 0) {
             console.log("No ports discovered");
           }
-          var com;
+          let com;
           ports.forEach(function (port) {
             if (port.manufacturer == "FTDI") {
               if (port.serialNumber == "A100Y8LF") {
@@ -206,65 +199,26 @@ const sendErogationRecipe = (cmd) => {
           });
 
           serport.on("readable", function () {
-            let buffReceive = serport.read();
+            const buffReceive = serport.read();
+            const cmd_mic_app = buffReceive.toString("utf8");
             console.log("receive:", buffReceive);
-            console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-            if (buffReceive.toString("utf8") == "10") {
-              cmd_mic_app = buffReceive.toString("utf8");
-              msg = "Recipe received!";
-              document.getElementById("msg").classList.remove("alert-danger");
-              document.getElementById("msg").textContent = msg;
-              document.getElementById("msg").classList.add("alert-success");
-              document.getElementById("username").value = "";
-              document.getElementById("water").value = "";
-              document.getElementById("supplement").value = "";
-              document.getElementById("flavour").value = "";
-              setTimeout(() => {
-                document.getElementById("msg").textContent = "";
-                document
-                  .getElementById("msg")
-                  .classList.remove("alert-success");
-              }, 2000);
-              //res.json({cmd_mic:cmd_mic_app,message:msg});
-            } else if (buffReceive.toString("utf8") == "11") {
-              cmd_mic_app = buffReceive.toString("utf8");
-              msg = "Erogation completed successfully!";
+            console.log("CMD_MICRO >> ", cmd_mic_app);
+            if (cmd_mic_app == "10") {
+              showSuccessMessage("Recipe received!");
+              cleanFieldErogation();
+            } else if (cmd_mic_app == "11") {
               closeLoader();
-              document.getElementById("msg").classList.remove("alert-danger");
-              document.getElementById("msg").textContent = msg;
-              document.getElementById("msg").classList.add("alert-success");
-              //res.json({cmd_mic:cmd_mic_app,message:msg});
-              document.getElementById("msg").textContent = msg;
-              document.getElementById("msg").classList.add("alert-success");
-              document.getElementById("username").value = "";
-              document.getElementById("water").value = "";
-              document.getElementById("supplement").value = "";
-              document.getElementById("flavour").value = "";
-              setTimeout(() => {
-                document.getElementById("msg").textContent = "";
-                document
-                  .getElementById("msg")
-                  .classList.remove("alert-success");
-              }, 2000);
-            } else if (buffReceive.toString("utf8") == "12") {
-              cmd_mic_app = buffReceive.toString("utf8");
-              msg = "Error in receiving the recipe!";
-              document.getElementById("msg").classList.remove("alert-success");
-              document.getElementById("msg").textContent = msg;
-              document.getElementById("msg").classList.add("alert-danger");
-              //res.json({cmd_mic:cmd_mic_app,message:msg});
-            } else if (buffReceive.toString("utf8") == "13") {
-              cmd_mic_app = buffReceive.toString("utf8");
-              msg = "Erogation failed!";
+              showSuccessMessage("Erogation completed successfully!");
+              cleanFieldErogation();
+            } else if (cmd_mic_app == "12") {
+              showErrorMessage("Error in receiving the recipe!");
+            } else if (cmd_mic_app == "13") {
               closeLoader();
-              document.getElementById("msg").classList.remove("alert-success");
-              document.getElementById("msg").textContent = msg;
-              document.getElementById("msg").classList.add("alert-danger");
-              //res.json({cmd_mic:cmd_mic_app,message:msg});
+              showErrorMessage("Erogation failed!");
             } else {
               closeLoader();
             }
-
+            cleanMessage(2000);
             serport.close(function (err) {
               console.log("port closed", err);
             }); // close the port after received command from mic
@@ -276,8 +230,14 @@ const sendErogationRecipe = (cmd) => {
       // This timeout reschedules itself.
       setTimeout(() => {
         listSerialPorts();
-        //closeLoader();
       }, 100);
     }
   }
+};
+
+const cleanFieldErogation = () => {
+  document.getElementById("username").value = "";
+  document.getElementById("water").value = "";
+  document.getElementById("supplement").value = "";
+  document.getElementById("flavour").value = "";
 };

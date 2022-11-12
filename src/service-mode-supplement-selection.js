@@ -19,7 +19,7 @@ function supplementSelection(cmd, items) {
       if (ports.length === 0) {
         console.log("No ports discovered");
       }
-      var com;
+      let com;
       ports.forEach(function (port) {
         if (port.manufacturer == "FTDI") {
           if (port.serialNumber == "A100Y8LF") {
@@ -29,7 +29,7 @@ function supplementSelection(cmd, items) {
       });
       console.log(com);
 
-      serport = new SerialPort({path: com,  baudRate: rate });
+      serport = new SerialPort({ path: com, baudRate: rate });
       serport.on("error", function (err) {
         console.log("Error: ", err.message);
       });
@@ -43,11 +43,12 @@ function supplementSelection(cmd, items) {
       });
 
       serport.on("readable", function () {
-        let buffReceive = serport.read();
+        const buffReceive = serport.read();
+        const cmd_mic_app = buffReceive.toString("utf8");
         console.log("receive:", buffReceive);
-        console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-        if (buffReceive.toString("utf8") == "19") {
-          for (var i = 1; i <= 4; i++) {
+        console.log("CMD_MICRO >> ", cmd_mic_app);
+        if (cmd_mic_app == "19") {
+          for (let i = 1; i <= 4; i++) {
             if (items == i.toString()) {
               document
                 .getElementById("supplement_" + i.toString())
@@ -65,12 +66,11 @@ function supplementSelection(cmd, items) {
             }
           }
         }
-        if (buffReceive.toString("utf8") == "30") {
-          cmd_mic_app = buffReceive.toString("utf8");
-          msg = "There is an error!";
+        if (cmd_mic_app == "30") {
           document.getElementById("msg").classList.remove("alert-success");
           document.getElementById("msg").textContent = msg;
           document.getElementById("msg").classList.add("alert-danger");
+          showErrorMessage("There is an error!");
         }
         serport.close(function (err) {
           console.log("port closed", err);
@@ -80,6 +80,5 @@ function supplementSelection(cmd, items) {
   };
   setTimeout(() => {
     listSerialPorts();
-    //closeLoader();
   }, 100);
 }

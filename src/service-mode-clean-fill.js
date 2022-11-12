@@ -6,12 +6,11 @@ function cleanAndFill(cmd, items, ver) {
 
   console.log("cmd_ser :>> ", cmd_ser);
 
-  let sentBuffSer = Buffer.from(cmd_ser);
+  const sentBuffSer = Buffer.from(cmd_ser);
 
   async function listSerialPorts() {
     await SerialPort.list().then((ports, err) => {
       if (err) {
-        //document.getElementById('error').textContent = err.message
         console.log(err);
         return;
       }
@@ -19,24 +18,19 @@ function cleanAndFill(cmd, items, ver) {
       console.log("ports", ports);
 
       if (ports.length === 0) {
-        //document.getElementById('error').textContent = 'No ports discovered'
         console.log("No ports discovered");
       }
-      var com;
+      let com;
       ports.forEach(function (port) {
         if (port.manufacturer == "FTDI") {
-          //serports.push(port.path);
-          //console.log('port :>> ', port);
           if (port.serialNumber == "A100Y8LF") {
             com = port.path;
-          } /*if(port.serialNumber== undefined){
-            com=port.path;
-          }*/
+          }
         }
       });
       console.log(com);
 
-      serport = new SerialPort({path: com,  baudRate: rate });
+      serport = new SerialPort({ path: com, baudRate: rate });
       serport.on("error", function (err) {
         console.log("Error: ", err.message);
       });
@@ -47,7 +41,7 @@ function cleanAndFill(cmd, items, ver) {
         } else {
           console.log("result :>> ", sentBuffSer);
 
-          for (var i = 1; i <= 4; i++) {
+          for (let i = 1; i <= 4; i++) {
             if (i.toString() !== ver) {
               document.getElementById("service_" + i).style.opacity = ".4";
               document.getElementById("service_" + i).disabled = "true";
@@ -59,16 +53,12 @@ function cleanAndFill(cmd, items, ver) {
       });
 
       serport.on("readable", function () {
-        let buffReceive = serport.read();
+        const buffReceive = serport.read();
+        const cmd_mic_app = buffReceive.toString("utf8");
         console.log("receive:", buffReceive);
-        console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-        if (buffReceive.toString("utf8") == "14") {
-          cmd_mic_app = buffReceive.toString("utf8");
-          msg = "peristaltic pump clean!";
-          document.getElementById("msg").classList.remove("alert-danger");
-          document.getElementById("msg").textContent = msg;
-          document.getElementById("msg").classList.add("alert-success");
-
+        console.log("CMD_MICRO >> ", cmd_mic_app);
+        if (cmd_mic_app == "14") {
+          showSuccessMessage("peristaltic pump clean!");
           document
             .getElementById("service_3")
             .classList.remove("btn-bg-tertiary");
@@ -76,12 +66,8 @@ function cleanAndFill(cmd, items, ver) {
             .getElementById("service_3")
             .classList.add("btn-bg-secondary");
         }
-        if (buffReceive.toString("utf8") == "15") {
-          cmd_mic_app = buffReceive.toString("utf8");
-          msg = "peristaltic pump fill!";
-          document.getElementById("msg").classList.remove("alert-danger");
-          document.getElementById("msg").textContent = msg;
-          document.getElementById("msg").classList.add("alert-success");
+        if (cmd_mic_app == "15") {
+          showSuccessMessage("peristaltic pump fill!");
           document
             .getElementById("service_" + ver)
             .classList.add("btn-bg-tertiary");
@@ -89,12 +75,8 @@ function cleanAndFill(cmd, items, ver) {
             .getElementById("service_" + ver)
             .classList.remove("btn-bg-secondary");
         }
-        if (buffReceive.toString("utf8") == "16") {
-          cmd_mic_app = buffReceive.toString("utf8");
-          msg = "Spiral feeder clean!";
-          document.getElementById("msg").classList.remove("alert-danger");
-          document.getElementById("msg").textContent = msg;
-          document.getElementById("msg").classList.add("alert-success");
+        if (cmd_mic_app == "16") {
+          showSuccessMessage("Spiral feeder clean!");
           document
             .getElementById("service_4")
             .classList.remove("btn-bg-tertiary");
@@ -102,13 +84,8 @@ function cleanAndFill(cmd, items, ver) {
             .getElementById("service_4")
             .classList.add("btn-bg-secondary");
         }
-        if (buffReceive.toString("utf8") == "17") {
-          cmd_mic_app = buffReceive.toString("utf8");
-          msg = "Spiral feeder fill!";
-          document.getElementById("msg").classList.remove("alert-danger");
-          document.getElementById("msg").textContent = msg;
-          document.getElementById("msg").classList.add("alert-success");
-
+        if (cmd_mic_app == "17") {
+          showSuccessMessage("Spiral feeder fill!");
           document
             .getElementById("service_" + ver)
             .classList.add("btn-bg-tertiary");
@@ -116,18 +93,15 @@ function cleanAndFill(cmd, items, ver) {
             .getElementById("service_" + ver)
             .classList.remove("btn-bg-secondary");
         }
-        if (buffReceive.toString("utf8") == "30") {
-          cmd_mic_app = buffReceive.toString("utf8");
-          msg = "There is an error!";
-          document.getElementById("msg").classList.remove("alert-success");
-          document.getElementById("msg").textContent = msg;
-          document.getElementById("msg").classList.add("alert-danger");
+        if (cmd_mic_app == "30") {
+          showErrorMessage("There is an error!");
         }
 
         for (var i = 1; i <= 4; i++) {
           document.getElementById("service_" + i).style.opacity = "1";
           document.getElementById("service_" + i).removeAttribute("disabled");
         }
+        cleanMessage();
         serport.close(function (err) {
           console.log("port closed", err);
         }); // close the port after received command from mic

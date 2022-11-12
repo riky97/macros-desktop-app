@@ -10,15 +10,17 @@ function closeLoader() {
 }
 
 function OpenModal() {
-  var modal = document.getElementById("modal");
+  let modal = document.getElementById("modal");
+  let user_id = document.getElementById("username").value;
+  let water = document.getElementById("water").value;
+  let supplement = document.getElementById("supplement").value;
+  let flavour = document.getElementById("flavour").value;
+
   modal.style.display = "grid";
-  var user_id = document.getElementById("username").value;
-  var water = document.getElementById("water").value;
   user_id.textContent = user_id;
-  var supplement = document.getElementById("supplement").value;
   user_id.textContent = user_id;
-  var flavour = document.getElementById("flavour").value;
   user_id.textContent = user_id;
+
   if (user_id != "") {
     document.getElementById("modal-username").textContent = user_id;
   } else {
@@ -42,10 +44,10 @@ function OpenModal() {
 }
 function CloseModal(e) {
   if (e == 0) {
-    var modal = document.getElementById("modal");
+    const modal = document.getElementById("modal");
     modal.style.display = "none";
   } else {
-    var modal = document.getElementById("modal_service");
+    const modal = document.getElementById("modal_service");
     modal.style.display = "none";
     document
       .getElementById("error-password")
@@ -56,7 +58,7 @@ function CloseModal(e) {
 }
 
 function showModalService() {
-  var modal_service = document.getElementById("modal_service");
+  const modal_service = document.getElementById("modal_service");
   modal_service.style.display = "grid";
 }
 
@@ -67,8 +69,8 @@ function closemenu() {
 }
 
 const showErrorMessage = (msg) => {
-  document.getElementById("msg").classList.remove("alert-danger");
-  document.getElementById("msg").classList.add("alert-success");
+  document.getElementById("msg").classList.remove("alert-success");
+  document.getElementById("msg").classList.add("alert-danger");
   document.getElementById("msg").textContent = msg;
 };
 
@@ -78,10 +80,11 @@ const showSuccessMessage = (msg) => {
   document.getElementById("msg").textContent = msg;
 };
 
-const cleanMessage = () => {
+const cleanMessage = (time) => {
+  const interval = time ? time : 5000;
   setTimeout(() => {
     document.getElementById("msg").classList.remove("alert-success");
     document.getElementById("msg").classList.remove("alert-danger");
     document.getElementById("msg").textContent = "";
-  }, 5000);
+  }, interval);
 };

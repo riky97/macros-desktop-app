@@ -1,18 +1,16 @@
 /*******************FLAVOUR SELECTION************************/
 
 function flavourSelection(cmd, items) {
-  var cs = parseInt(cmd) ^ parseInt(items);
-
-  var result =
+  const cs = parseInt(cmd) ^ parseInt(items);
+  const result =
     cmd.toString() + "." + items.toString() + "." + cs.toString() + ".e";
 
   console.log(result);
-  var buffSetSupp = Buffer.from(result);
+  const buffSetSupp = Buffer.from(result);
 
   const listSerialPorts = async () => {
     await SerialPort.list().then((ports, err) => {
       if (err) {
-        //document.getElementById('error').textContent = err.message
         console.log(err);
         return;
       }
@@ -20,24 +18,19 @@ function flavourSelection(cmd, items) {
       console.log("ports", ports);
 
       if (ports.length === 0) {
-        //document.getElementById('error').textContent = 'No ports discovered'
         console.log("No ports discovered");
       }
-      var com;
+      let com;
       ports.forEach(function (port) {
         if (port.manufacturer == "FTDI") {
-          //serports.push(port.path);
-          //console.log('port :>> ', port);
           if (port.serialNumber == "A100Y8LF") {
             com = port.path;
-          } /*if(port.serialNumber== undefined){
-              com=port.path;
-            }*/
+          }
         }
       });
       console.log(com);
 
-      serport = new SerialPort({path: com,  baudRate: rate });
+      serport = new SerialPort({ path: com, baudRate: rate });
       serport.on("error", function (err) {
         console.log("Error: ", err.message);
       });
@@ -51,11 +44,12 @@ function flavourSelection(cmd, items) {
       });
 
       serport.on("readable", function () {
-        let buffReceive = serport.read();
+        const buffReceive = serport.read();
+        const cmd_mic_app = buffReceive.toString("utf8");
         console.log("receive:", buffReceive);
-        console.log("CMD_MICRO >> ", buffReceive.toString("utf8"));
-        if (buffReceive.toString("utf8") == "20") {
-          for (var i = 1; i <= 5; i++) {
+        console.log("CMD_MICRO >> ", cmd_mic_app);
+        if (cmd_mic_app == "20") {
+          for (let i = 1; i <= 5; i++) {
             if (items == i.toString()) {
               document
                 .getElementById("flavour_" + i.toString())
@@ -73,13 +67,11 @@ function flavourSelection(cmd, items) {
             }
           }
         }
-        if (buffReceive.toString("utf8") == "30") {
-          cmd_mic_app = buffReceive.toString("utf8");
-          msg = "There is an error!";
-          document.getElementById("msg").classList.remove("alert-success");
-          document.getElementById("msg").textContent = msg;
-          document.getElementById("msg").classList.add("alert-danger");
+        if (cmd_mic_app == "30") {
+          showErrorMessage("There is an error!");
+          cleanMessage();
         }
+
         serport.close(function (err) {
           console.log("port closed", err);
         }); // close the port after received command from mic
@@ -88,6 +80,5 @@ function flavourSelection(cmd, items) {
   };
   setTimeout(() => {
     listSerialPorts();
-    //closeLoader();
   }, 100);
 }
